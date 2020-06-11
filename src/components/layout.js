@@ -2,8 +2,11 @@ import React from "react"
 import { Link } from "gatsby"
 
 import { rhythm, scale } from "../utils/typography"
+import { PreviewNodeHelper } from "../../plugins/gatsby-plugin-preview-node-list"
 
-const Layout = ({ location, title, children }) => {
+const Layout = ({ location, site, children }) => {
+  const { title } = site.siteMetadata
+
   const rootPath = `${__PATH_PREFIX__}/`
   let header
 
@@ -56,7 +59,9 @@ const Layout = ({ location, title, children }) => {
         padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
       }}
     >
-      <header>{header}</header>
+      <header>
+        <PreviewNodeHelper id={site.id}>{header}</PreviewNodeHelper>
+      </header>
       <main>{children}</main>
       <footer>
         © {new Date().getFullYear()}, Built with

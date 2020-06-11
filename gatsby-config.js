@@ -12,6 +12,7 @@ module.exports = {
     },
   },
   plugins: [
+    `gatsby-plugin-preview-node-list`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
