@@ -1,3 +1,5 @@
+const path = require(`path`)
+
 const isEditableNodePredicate = node => {
   return !node.parent
 }
@@ -13,7 +15,7 @@ exports.createResolvers = ({ createResolvers, store, getNode }) => {
           },
         },
         resolve: (source, args, context, info) => {
-          const { componentDataDependencies } = store.getState()
+          const { componentDataDependencies, program } = store.getState()
 
           const usedNodesIds = new Set()
           componentDataDependencies.nodes.forEach((pathSet, nodeId) => {
@@ -30,12 +32,25 @@ exports.createResolvers = ({ createResolvers, store, getNode }) => {
               const node = getNode(nodeId)
 
               if (isEditableNodePredicate(node)) {
-                editableNodes.add({
+                const editable = {
                   id: node.id,
                   originalNodeId,
                   type: node.internal.type,
                   description: node.internal.description,
-                })
+                }
+
+                // --- This should be somehow defined in plugins that create those types
+                if (editable.type === `File`) {
+                  editable.file = node.absolutePath
+                } else if (editable.type === `Site`) {
+                  const gatsbyConfigPath = path.join(
+                    program.directory,
+                    `gatsby-config.js`
+                  )
+                  editable.file = gatsbyConfigPath
+                }
+
+                editableNodes.add(editable)
                 return
               }
 

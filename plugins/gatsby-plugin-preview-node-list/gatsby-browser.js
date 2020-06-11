@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState, useContext, useReducer } from "react"
 import { createClient } from "urql"
-import { FaEye } from "react-icons/fa"
+import { FaEye, FaEdit } from "react-icons/fa"
 
 import { PreviewHelperContext } from "./"
 
@@ -62,6 +62,9 @@ const Overlay = ({ path }) => {
           nodeData.originalNodeId
         )
 
+        // for now - ideally can have some urls later
+        const isEditable = !!nodeData.file
+
         return (
           <div
             onMouseOver={() => {
@@ -74,9 +77,18 @@ const Overlay = ({ path }) => {
                 setHovered(null)
               }
             }}
+            onClick={() => {
+              if (nodeData.file) {
+                window.fetch(
+                  `/__open-stack-frame-in-editor?fileName=` +
+                    window.encodeURIComponent(nodeData.file)
+                )
+              }
+            }}
             key={nodeData.id}
             style={{
               padding: `0 15px`,
+              cursor: isEditable ? `pointer` : `default`,
               background:
                 hovered === nodeData.originalNodeId ? `#f5e9e9` : `inherit`,
             }}
@@ -88,6 +100,13 @@ const Overlay = ({ path }) => {
                 color: isRenderedInPreview ? `#2cc32c` : `#c7c7c7`,
               }}
             />
+            <FaEdit
+              style={{
+                marginRight: 5,
+                verticalAlign: `middle`,
+                color: isEditable ? `#7880e6` : `#c7c7c7`,
+              }}
+            />
             [{nodeData.type}] {nodeData.description || nodeData.originalNodeId}
           </div>
         )
@@ -96,7 +115,6 @@ const Overlay = ({ path }) => {
   )
 }
 
-// const renderedHelpersReducer = state
 function renderedHelpersReducer(state, action) {
   switch (action.type) {
     case "REGISTER": {
