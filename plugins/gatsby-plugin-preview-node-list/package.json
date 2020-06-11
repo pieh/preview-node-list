@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-icons": "^3.10.0",
+    "urql": "^1.9.8"
+  }
+}
